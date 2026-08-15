@@ -37,7 +37,8 @@ let pingInterval = null;
 
 // ── WebSocket ─────────────────────────────────────────────────────────────────
 function connectWebSocket() {
-  const wsUrl = `ws://${window.location.host}/ws/call`;
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  const wsUrl = `${protocol}//${window.location.host}/ws/call`;
   ws = new WebSocket(wsUrl);
   ws.binaryType = "arraybuffer";
 
