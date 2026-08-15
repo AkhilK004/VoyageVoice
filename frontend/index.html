@@ -2,72 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VoyageVoice — AI Travel Assistant</title>
-  <meta name="description" content="Talk to Aria, your AI-powered travel and visa assistant by Atlys." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Meet Your Smart AI Assistant</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/css/main.css" />
 </head>
 <body>
-  <div class="bg-orbs">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-  </div>
+  <div class="mesh-bg"></div>
+  
+  <div class="bargein-overlay" id="bargein-overlay"></div>
 
-  <main class="app">
-    <!-- Header -->
-    <header class="header">
-      <div class="logo">
-        <span class="logo-icon">✈</span>
-        <span class="logo-text">VoyageVoice</span>
+  <main class="app-container">
+    <header class="app-header">
+      <div class="user-avatar">
+        <img src="https://ui-avatars.com/api/?name=User&background=1a1b26&color=fff" alt="User" />
       </div>
-      <span class="powered-by">Powered by Atlys AI</span>
+      <button class="premium-btn">Try Premium</button>
     </header>
 
-    <!-- Agent Avatar -->
-    <section class="agent-section">
-      <div class="avatar-container" id="avatar-container">
-        <div class="avatar-ring" id="avatar-ring"></div>
-        <div class="avatar" id="avatar">
-          <span class="avatar-emoji">🧳</span>
-        </div>
-        <div class="agent-name">Aria</div>
-        <div class="agent-role">Travel AI Assistant</div>
+    <section class="ai-hero" id="ai-hero">
+      <div class="ai-orb-container" id="avatar-container">
+        <div class="ai-orb" id="avatar"></div>
+        <div class="ai-orb-glow" id="avatar-ring"></div>
       </div>
-
-      <!-- Status Badge -->
-      <div class="status-badge" id="status-badge">
-        <span class="status-dot" id="status-dot"></span>
-        <span class="status-text" id="status-text">Ready to connect</span>
+      <h1 class="greeting">Hello, Traveler</h1>
+      <p class="subtitle" id="hero-subtitle">How can I assist you right now?</p>
+      
+      <div class="status-pill" id="status-badge">
+         <span class="status-dot" id="status-dot"></span>
+         <span id="status-text">Ready</span>
       </div>
     </section>
 
-    <!-- Transcript Feed -->
-    <section class="transcript-section">
-      <div class="transcript-feed" id="transcript-feed">
-        <div class="transcript-placeholder">
-          <span>Your conversation will appear here</span>
-        </div>
+    <!-- Suggestion Cards (Hidden during call) -->
+    <section class="suggestions-grid" id="suggestions">
+      <div class="suggestion-card" onclick="startCallWithHint('Check if I need a visa for Japan')">
+        <svg class="card-icon-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <div class="card-title">Visa Rules</div>
+        <div class="card-desc">Check if you need a visa for Japan.</div>
       </div>
+      <div class="suggestion-card" onclick="startCallWithHint('What documents do I need for a US tourist visa?')">
+        <svg class="card-icon-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+        <div class="card-title">Documents</div>
+        <div class="card-desc">List of docs for a US tourist visa.</div>
+      </div>
+      <div class="suggestion-card" onclick="startCallWithHint('How long does a Schengen visa take to process?')">
+        <svg class="card-icon-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div class="card-title">Processing</div>
+        <div class="card-desc">How long does a Schengen visa take?</div>
+      </div>
+      <div class="suggestion-card" onclick="startCallWithHint('Calculate total visa fees for the UK.')">
+        <svg class="card-icon-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        <div class="card-title">Visa Fees</div>
+        <div class="card-desc">Calculate total visa fees for the UK.</div>
+      </div>
+    </section>
+
+    <!-- Transcript Feed (Hidden initially) -->
+    <section class="transcript-section" id="transcript-container" style="display: none;">
+      <div class="transcript-feed" id="transcript-feed"></div>
     </section>
 
     <!-- Controls -->
-    <section class="controls">
-      <button class="btn-call" id="btn-call" onclick="toggleCall()">
-        <span class="btn-icon" id="btn-icon">📞</span>
-        <span class="btn-label" id="btn-label">Start Call</span>
-      </button>
-      <div class="latency-strip" id="latency-strip" style="display:none">
-        <span class="latency-item">STT <b id="stt-latency">—</b>ms</span>
-        <span class="latency-divider">|</span>
-        <span class="latency-item">E2E <b id="e2e-latency">—</b>ms</span>
+    <footer class="app-footer">
+      <div class="input-bar">
+        <button class="icon-btn">➕</button>
+        <span class="placeholder-text">Tap the mic to start call...</span>
+        
+        <div class="mic-container">
+          <button class="mic-btn" id="btn-call" onclick="toggleCall()">
+            <svg viewBox="0 0 24 24" class="mic-icon" id="btn-icon">
+              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+              <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+            </svg>
+          </button>
+        </div>
       </div>
-    </section>
+      <div class="latency-strip" id="latency-strip" style="display:none"></div>
+    </footer>
   </main>
-
+  
   <script src="/static/js/audio.js"></script>
   <script src="/static/js/ui.js"></script>
 </body>

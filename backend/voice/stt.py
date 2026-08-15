@@ -58,7 +58,6 @@ class STTSession:
             interim_results=True,          # Stream partial results
             utterance_end_ms="1000",       # Silence to mark utterance end
             vad_events=True,               # Voice activity detection events
-            encoding="webm-opus",          # Browser MediaRecorder default
         )
 
         started = await self._connection.start(options)

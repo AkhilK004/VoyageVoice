@@ -1,71 +1,64 @@
-/**
- * ui.js — UI state management for the call interface.
- *
- * Phase 3 additions:
- *  - setVADIndicator: mic glow when user is speaking (client-side VAD)
- *  - showBargeinPulse: flash animation when user interrupts agent
- */
-
 const UI = (() => {
-  // DOM references
-  const avatarEl      = document.getElementById("avatar");
-  const avatarRing    = document.getElementById("avatar-ring");
-  const statusDot     = document.getElementById("status-dot");
-  const statusText    = document.getElementById("status-text");
+  const avatarEl = document.getElementById("avatar");
+  const avatarRing = document.getElementById("avatar-ring");
+  const statusDot = document.getElementById("status-dot");
+  const statusText = document.getElementById("status-text");
+  const statusBadge = document.getElementById("status-badge");
   const transcriptFeed = document.getElementById("transcript-feed");
-  const btnCall       = document.getElementById("btn-call");
-  const btnIcon       = document.getElementById("btn-icon");
-  const btnLabel      = document.getElementById("btn-label");
+  const transcriptContainer = document.getElementById("transcript-container");
+  const suggestions = document.getElementById("suggestions");
+  const btnCall = document.getElementById("btn-call");
+  const aiHero = document.getElementById("ai-hero");
+  const bargeinOverlay = document.getElementById("bargein-overlay");
 
-  // Track the current interim message element so we can update it in-place
   let currentInterimEl = null;
-  // Track the current agent message being streamed sentence by sentence
   let currentAgentEl = null;
   let isFirstMessage = true;
 
-  // ── Status ────────────────────────────────────────────────────────────────
   function setStatus(value, customText = null) {
-    // Remove all state classes
-    statusDot.className = "status-dot";
+    statusBadge.className = "status-pill";
     avatarEl.classList.remove("speaking");
-    avatarRing.classList.remove("active", "pulsing");
+    avatarRing.classList.remove("active");
 
     const stateMap = {
-      listening: { dot: "listening", text: "Listening...",  ring: "active" },
-      thinking:  { dot: "thinking",  text: "Thinking...",   ring: "pulsing" },
-      speaking:  { dot: "speaking",  text: "Aria speaking", ring: "pulsing" },
-      idle:      { dot: "",          text: "Call ended",    ring: "" },
-      error:     { dot: "",          text: "Error",         ring: "" },
+      listening: { class: "listening", text: "Listening...", ring: "active" },
+      thinking: { class: "thinking", text: "Thinking...", ring: "" },
+      speaking: { class: "speaking", text: "Speaking", ring: "active" },
+      idle: { class: "idle", text: "Ready", ring: "" },
+      error: { class: "error", text: "Error", ring: "" }
     };
 
-    const state = stateMap[value] || { dot: "", text: value, ring: "" };
-
-    if (state.dot) statusDot.classList.add(state.dot);
+    const state = stateMap[value] || { class: "", text: value, ring: "" };
+    
+    statusBadge.classList.add(state.class);
     statusText.textContent = customText || state.text;
 
-    if (state.ring === "active")   avatarRing.classList.add("active");
-    if (state.ring === "pulsing")  avatarRing.classList.add("pulsing");
-    if (value === "speaking")      avatarEl.classList.add("speaking");
+    if (state.ring === "active") avatarRing.classList.add("active");
+    if (value === "speaking") avatarEl.classList.add("speaking");
   }
 
-  // ── Call Button ───────────────────────────────────────────────────────────
   function setCallActive(active) {
     if (active) {
       btnCall.classList.add("active");
-      btnIcon.textContent = "📵";
-      btnLabel.textContent = "End Call";
+      suggestions.classList.add("hidden");
+      transcriptContainer.style.display = "flex";
+      aiHero.classList.add("compact");
+      // Change mic icon to stop icon
+      document.getElementById("btn-icon").innerHTML = '<path d="M6 6h12v12H6z"/>';
     } else {
       btnCall.classList.remove("active");
-      btnIcon.textContent = "📞";
-      btnLabel.textContent = "Start Call";
       setStatus("idle");
-      avatarRing.classList.remove("active", "pulsing");
+      avatarRing.classList.remove("active");
       avatarEl.classList.remove("speaking");
+      suggestions.classList.remove("hidden");
+      transcriptContainer.style.display = "none";
+      aiHero.classList.remove("compact");
+      // Change back to mic icon
+      document.getElementById("btn-icon").innerHTML = '<path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>';
       currentAgentEl = null;
     }
   }
 
-  // ── Transcript ────────────────────────────────────────────────────────────
   function clearPlaceholder() {
     if (isFirstMessage) {
       transcriptFeed.innerHTML = "";
@@ -73,111 +66,82 @@ const UI = (() => {
     }
   }
 
-  /**
-   * Add or update the user's interim (live) transcript.
-   * Interim results update in-place; final results commit a new bubble.
-   */
   function addTranscript(text, isFinal, latencyMs) {
     clearPlaceholder();
-
     if (!isFinal) {
-      // Interim: update existing interim bubble or create one
       if (!currentInterimEl) {
         currentInterimEl = createMessageEl("user");
-        const bubble = currentInterimEl.querySelector(".bubble");
-        bubble.classList.add("interim");
+        currentInterimEl.style.opacity = "0.7";
         transcriptFeed.appendChild(currentInterimEl);
       }
-      currentInterimEl.querySelector(".bubble").textContent = text;
+      currentInterimEl.textContent = text;
       scrollToBottom();
       return;
     }
-
-    // Final transcript: remove interim bubble, add committed bubble
     if (currentInterimEl) {
       currentInterimEl.remove();
       currentInterimEl = null;
     }
-
     const el = createMessageEl("user");
-    el.querySelector(".bubble").textContent = text;
-    if (latencyMs) {
-      el.querySelector(".bubble-label").textContent = `STT ${Math.round(latencyMs)}ms`;
-    }
+    el.textContent = text;
     transcriptFeed.appendChild(el);
-    currentAgentEl = null;  // New user turn → next agent msg is fresh
+    currentAgentEl = null;
     scrollToBottom();
   }
 
-  /**
-   * Add an agent message sentence. Sentences for the same turn
-   * are appended to the same bubble (streaming feel).
-   */
   function addAgentMessage(text) {
     clearPlaceholder();
-
     if (!currentAgentEl) {
       currentAgentEl = createMessageEl("agent");
       transcriptFeed.appendChild(currentAgentEl);
     }
-
-    const bubble = currentAgentEl.querySelector(".bubble");
-    const existing = bubble.textContent;
-    bubble.textContent = existing ? existing + " " + text : text;
+    const existing = currentAgentEl.textContent;
+    currentAgentEl.textContent = existing ? existing + " " + text : text;
     scrollToBottom();
   }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
   function createMessageEl(role) {
     const el = document.createElement("div");
-    el.className = `message ${role}`;
-
-    const label = document.createElement("span");
-    label.className = "bubble-label";
-    label.textContent = role === "user" ? "You" : "Aria";
-
-    const bubble = document.createElement("div");
-    bubble.className = "bubble";
-
-    if (role === "user") {
-      el.appendChild(bubble);
-      el.appendChild(label);
-    } else {
-      el.appendChild(label);
-      el.appendChild(bubble);
-    }
-
+    el.className = `msg ${role}`;
     return el;
   }
 
   function scrollToBottom() {
-    transcriptFeed.scrollTop = transcriptFeed.scrollHeight;
+    transcriptContainer.scrollTop = transcriptContainer.scrollHeight;
   }
 
-  // ── Phase 3: VAD Indicator ────────────────────────────────────────────────
-  /**
-   * Show/hide a glowing mic indicator on the call button
-   * when the client-side VAD detects user speech.
-   */
   function setVADIndicator(isSpeaking) {
     if (isSpeaking) {
-      btnCall.classList.add("user-speaking");
+      btnCall.classList.add("vad-active");
     } else {
-      btnCall.classList.remove("user-speaking");
+      btnCall.classList.remove("vad-active");
     }
   }
 
-  /**
-   * Flash the avatar ring briefly to signal a barge-in was detected.
-   */
   function showBargeinPulse() {
-    avatarRing.classList.add("bargein-flash");
-    setTimeout(() => avatarRing.classList.remove("bargein-flash"), 600);
+    bargeinOverlay.classList.remove("bargein-anim");
+    void bargeinOverlay.offsetWidth; // trigger reflow
+    bargeinOverlay.classList.add("bargein-anim");
     statusText.textContent = "Interrupted ✂";
-    setTimeout(() => statusText.textContent = "Listening...", 1000);
+    
+    if (currentAgentEl) {
+      currentAgentEl.classList.add("interrupted");
+    }
+    
+    setTimeout(() => {
+      if (statusBadge.classList.contains("listening")) {
+        statusText.textContent = "Listening...";
+      }
+    }, 1000);
   }
 
   return { setStatus, setCallActive, addTranscript, addAgentMessage, setVADIndicator, showBargeinPulse };
 })();
 
 window.UI = UI;
+
+window.startCallWithHint = function(hintText) {
+  if (!window.callActive) {
+    window.toggleCall();
+  }
+}

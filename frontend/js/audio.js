@@ -22,7 +22,7 @@ let vadTimer = null;
 let isSpeaking = false;         // Client-side speaking state
 
 // VAD thresholds
-const VAD_ENERGY_THRESHOLD = 0.015;   // RMS amplitude threshold (0–1)
+const VAD_ENERGY_THRESHOLD = 0.005;   // RMS amplitude threshold (0–1) lowered for quieter mics
 const VAD_SPEECH_START_MS  = 80;      // Must exceed threshold for this long → speech_start
 const VAD_SPEECH_END_MS    = 700;     // Below threshold for this long → speech_end
 
@@ -33,6 +33,8 @@ let speechEndTimer = null;
 let userStartedSpeakingAt = null;
 let agentStartedSpeakingAt = null;
 
+let pingInterval = null;
+
 // ── WebSocket ─────────────────────────────────────────────────────────────────
 function connectWebSocket() {
   const wsUrl = `ws://${window.location.host}/ws/call`;
@@ -42,6 +44,13 @@ function connectWebSocket() {
   ws.onopen = () => {
     console.log("[WS] Connected");
     startMicrophone();
+    
+    // Stability: Start keepalive ping to prevent timeouts
+    pingInterval = setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: "ping" }));
+      }
+    }, 10000);
   };
 
   ws.onmessage = async (event) => {
@@ -51,6 +60,7 @@ function connectWebSocket() {
     } else {
       try {
         const msg = JSON.parse(event.data);
+        if (msg.type === "pong") return; // Ignore keepalive responses
         handleServerMessage(msg);
       } catch (e) {
         console.warn("[WS] Non-JSON:", event.data);
@@ -60,10 +70,12 @@ function connectWebSocket() {
 
   ws.onerror = (err) => {
     console.error("[WS] Error:", err);
-    UI.setStatus("error", "Connection error");
+    UI.setStatus("error", "Connection error. Please refresh.");
   };
 
   ws.onclose = () => {
+    console.log("[WS] Disconnected");
+    if (pingInterval) clearInterval(pingInterval);
     if (callActive) endCall();
   };
 }
@@ -147,10 +159,32 @@ async function startMicrophone() {
   }
 }
 
+let dynamicThreshold = 0.005;
+
 // ── VAD Loop ──────────────────────────────────────────────────────────────────
 function startVADLoop() {
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Float32Array(bufferLength);
+
+  let isCalibrating = true;
+  let calibrationSamples = [];
+  
+  console.log("[VAD] Calibrating microphone for 1 second...");
+  UI.setStatus("thinking", "Calibrating mic...");
+  
+  // Calibrate for 1 second to find the ambient noise floor
+  setTimeout(() => {
+    isCalibrating = false;
+    if (calibrationSamples.length > 0) {
+      const avgNoise = calibrationSamples.reduce((a, b) => a + b) / calibrationSamples.length;
+      dynamicThreshold = Math.max(0.002, avgNoise * 2.5); // 2.5x the noise floor, min 0.002
+      console.log(`[VAD] Calibration complete. Noise floor: ${avgNoise.toFixed(5)}, Threshold set to: ${dynamicThreshold.toFixed(5)}`);
+      UI.setStatus("listening");
+    } else {
+      console.warn("[VAD] Calibration failed: 0 samples. Using default threshold.");
+      UI.setStatus("listening");
+    }
+  }, 1000);
 
   function tick() {
     if (!callActive || !analyser) return;
@@ -163,7 +197,21 @@ function startVADLoop() {
       sum += dataArray[i] * dataArray[i];
     }
     const rms = Math.sqrt(sum / bufferLength);
-    const isLoud = rms > VAD_ENERGY_THRESHOLD;
+    
+    if (isCalibrating) {
+      if (rms > 0) calibrationSamples.push(rms);
+      vadTimer = requestAnimationFrame(tick);
+      return;
+    }
+
+    const isLoud = rms > dynamicThreshold;
+    
+    // Debug: Log RMS every half second to see if mic is working at all
+    if (Math.random() < 0.03 && rms > 0) {
+        console.log(`[VAD Debug] Current mic volume (RMS): ${rms.toFixed(5)}`);
+    } else if (Math.random() < 0.01 && rms === 0) {
+        console.log(`[VAD Debug] Mic is completely silent (RMS = 0). Check hardware mute or Windows privacy settings.`);
+    }
 
     if (isLoud && !isSpeaking) {
       // Clear any pending end timer
