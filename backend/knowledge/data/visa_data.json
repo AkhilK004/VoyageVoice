@@ -1,0 +1,333 @@
+[
+  {
+    "country": "Japan",
+    "continent": "Asia",
+    "visa_types": [
+      {
+        "type": "Tourist Visa",
+        "eligible_passports": ["India", "China", "Pakistan", "Bangladesh", "Sri Lanka", "Nepal"],
+        "visa_on_arrival": false,
+        "e_visa": true,
+        "duration": "15-90 days",
+        "validity": "Single/multiple entry",
+        "processing_time_days": "5-7 business days",
+        "fees_usd": 30,
+        "fees_inr": 2500,
+        "required_documents": [
+          "Valid passport (6+ months validity)",
+          "2 passport-size photographs",
+          "Completed visa application form",
+          "Return flight tickets",
+          "Hotel booking confirmation",
+          "Bank statements (last 3 months)",
+          "Travel itinerary",
+          "No-objection letter (if employed)"
+        ],
+        "notes": "Japan requires an invitation letter or proof of accommodation for the full duration of stay. Apply through the Japanese Embassy or authorized travel agent."
+      },
+      {
+        "type": "Visa-Free",
+        "eligible_passports": ["USA", "UK", "Australia", "Canada", "Germany", "France", "Italy", "Spain", "Netherlands", "Singapore"],
+        "visa_on_arrival": false,
+        "e_visa": false,
+        "duration": "90 days",
+        "validity": "No visa required",
+        "processing_time_days": "0",
+        "fees_usd": 0,
+        "fees_inr": 0,
+        "required_documents": ["Valid passport", "Return ticket", "Proof of funds"],
+        "notes": "Citizens of these countries can stay up to 90 days without a visa for tourism."
+      }
+    ]
+  },
+  {
+    "country": "Thailand",
+    "continent": "Asia",
+    "visa_types": [
+      {
+        "type": "Visa-on-Arrival",
+        "eligible_passports": ["India", "China", "Saudi Arabia", "UAE"],
+        "visa_on_arrival": true,
+        "e_visa": true,
+        "duration": "15 days (VoA), 30 days (e-Visa)",
+        "validity": "Single entry",
+        "processing_time_days": "Instant (VoA), 3-4 days (e-Visa)",
+        "fees_usd": 35,
+        "fees_inr": 2900,
+        "required_documents": [
+          "Valid passport (6+ months validity)",
+          "Return flight ticket",
+          "Hotel booking or accommodation proof",
+          "Passport-size photograph",
+          "Proof of funds (min THB 10,000 or USD 250)"
+        ],
+        "notes": "Visa-on-Arrival is available at major international airports. Apply for e-Visa online at thaievisa.go.th for a smoother entry."
+      },
+      {
+        "type": "Visa-Free",
+        "eligible_passports": ["USA", "UK", "Australia", "Canada", "Germany", "France", "Singapore", "Malaysia"],
+        "visa_on_arrival": false,
+        "e_visa": false,
+        "duration": "30-60 days",
+        "validity": "No visa required",
+        "processing_time_days": "0",
+        "fees_usd": 0,
+        "fees_inr": 0,
+        "required_documents": ["Valid passport", "Return ticket"],
+        "notes": "Visa exemption allows stay up to 30 days (most countries) or 60 days (some special arrangements)."
+      }
+    ]
+  },
+  {
+    "country": "USA",
+    "continent": "North America",
+    "visa_types": [
+      {
+        "type": "B-1/B-2 Tourist Visa",
+        "eligible_passports": ["India", "China", "Pakistan", "Bangladesh", "Nigeria"],
+        "visa_on_arrival": false,
+        "e_visa": false,
+        "duration": "Up to 6 months per visit, visa valid 10 years",
+        "validity": "Multiple entry",
+        "processing_time_days": "60-300 days (varies by consulate wait times)",
+        "fees_usd": 185,
+        "fees_inr": 15400,
+        "required_documents": [
+          "Valid passport (6+ months validity)",
+          "DS-160 online form",
+          "Visa application fee payment",
+          "Photo per US visa specifications",
+          "Bank statements (last 6 months)",
+          "Property documents or strong home country ties",
+          "Employment letter or business registration",
+          "Travel itinerary (optional)",
+          "Interview appointment confirmation"
+        ],
+        "notes": "Interview is typically required at a US Embassy or Consulate. Approval is not guaranteed. Strong ties to home country significantly help. Wait times can be very long — apply early."
+      },
+      {
+        "type": "ESTA (Visa Waiver)",
+        "eligible_passports": ["UK", "Australia", "Germany", "France", "Japan", "South Korea", "Italy", "Netherlands", "Spain", "Singapore"],
+        "visa_on_arrival": false,
+        "e_visa": true,
+        "duration": "90 days",
+        "validity": "Multiple entries for 2 years",
+        "processing_time_days": "Instant to 72 hours",
+        "fees_usd": 21,
+        "fees_inr": 1750,
+        "required_documents": ["Valid passport", "Online ESTA application"],
+        "notes": "Apply online at esta.cbp.dhs.gov. Approved ESTA is valid for 2 years or until passport expires."
+      }
+    ]
+  },
+  {
+    "country": "UK",
+    "continent": "Europe",
+    "visa_types": [
+      {
+        "type": "Standard Visitor Visa",
+        "eligible_passports": ["India", "China", "Pakistan", "Bangladesh", "Nigeria", "Ghana"],
+        "visa_on_arrival": false,
+        "e_visa": false,
+        "duration": "Up to 6 months",
+        "validity": "Single or multiple entry",
+        "processing_time_days": "15-20 business days",
+        "fees_usd": 130,
+        "fees_inr": 10800,
+        "required_documents": [
+          "Valid passport",
+          "Online application (gov.uk)",
+          "Biometrics at visa application centre",
+          "Bank statements (last 6 months)",
+          "Proof of accommodation in UK",
+          "Return flight tickets",
+          "Employment/income proof",
+          "Travel history documents"
+        ],
+        "notes": "Apply on gov.uk/standard-visitor-visa. Biometric appointment required. Decision usually within 3 weeks."
+      }
+    ]
+  },
+  {
+    "country": "Schengen (Europe)",
+    "continent": "Europe",
+    "visa_types": [
+      {
+        "type": "Schengen Tourist Visa",
+        "eligible_passports": ["India", "China", "Pakistan", "Bangladesh", "Sri Lanka"],
+        "visa_on_arrival": false,
+        "e_visa": false,
+        "duration": "90 days within 180-day period",
+        "validity": "Single, double, or multiple entry",
+        "processing_time_days": "15 calendar days (up to 60 in complex cases)",
+        "fees_usd": 90,
+        "fees_inr": 7500,
+        "required_documents": [
+          "Valid passport (3 months beyond travel dates)",
+          "Completed Schengen visa application form",
+          "2 passport photographs",
+          "Travel insurance (min €30,000 coverage)",
+          "Flight booking confirmation",
+          "Hotel/accommodation bookings",
+          "Bank statements (last 3-6 months)",
+          "Employment letter and leave approval",
+          "Income tax returns"
+        ],
+        "notes": "Covers 27 Schengen area countries including France, Germany, Italy, Spain, Netherlands and more. Apply at the embassy of the country where you will spend most time."
+      }
+    ]
+  },
+  {
+    "country": "Singapore",
+    "continent": "Asia",
+    "visa_types": [
+      {
+        "type": "Tourist Visa",
+        "eligible_passports": ["India", "China", "Bangladesh", "Sri Lanka", "Nepal", "Pakistan"],
+        "visa_on_arrival": false,
+        "e_visa": true,
+        "duration": "30 days",
+        "validity": "Single entry",
+        "processing_time_days": "3-5 business days",
+        "fees_usd": 30,
+        "fees_inr": 2500,
+        "required_documents": [
+          "Valid passport",
+          "Online application via ICA or authorized agent",
+          "Return flight ticket",
+          "Hotel booking",
+          "Bank statements",
+          "Photograph"
+        ],
+        "notes": "Apply via Singapore Immigration and Checkpoints Authority (ICA) portal or through an authorized agent."
+      },
+      {
+        "type": "Visa-Free",
+        "eligible_passports": ["USA", "UK", "Australia", "Germany", "France", "Japan", "Canada", "Malaysia", "South Korea"],
+        "visa_on_arrival": false,
+        "e_visa": false,
+        "duration": "30-90 days",
+        "validity": "No visa required",
+        "processing_time_days": "0",
+        "fees_usd": 0,
+        "fees_inr": 0,
+        "required_documents": ["Valid passport", "Return ticket", "Proof of funds"],
+        "notes": "Most Western passport holders can enter without a visa for tourism."
+      }
+    ]
+  },
+  {
+    "country": "Dubai (UAE)",
+    "continent": "Middle East",
+    "visa_types": [
+      {
+        "type": "Tourist Visa (e-Visa)",
+        "eligible_passports": ["India", "China", "Pakistan", "Bangladesh", "Nepal", "Sri Lanka"],
+        "visa_on_arrival": false,
+        "e_visa": true,
+        "duration": "30 or 60 days",
+        "validity": "Single entry",
+        "processing_time_days": "2-4 business days",
+        "fees_usd": 90,
+        "fees_inr": 7500,
+        "required_documents": [
+          "Valid passport",
+          "Passport-size photograph (white background)",
+          "Return flight ticket",
+          "Hotel booking",
+          "Bank statement"
+        ],
+        "notes": "Indians can also get a visa on arrival if they hold a valid US, UK, or EU visa. Apply via UAE ICP portal or airlines like Emirates."
+      },
+      {
+        "type": "Visa-Free",
+        "eligible_passports": ["USA", "UK", "Australia", "Germany", "France", "EU countries"],
+        "visa_on_arrival": false,
+        "e_visa": false,
+        "duration": "90 days",
+        "validity": "No visa required",
+        "processing_time_days": "0",
+        "fees_usd": 0,
+        "fees_inr": 0,
+        "required_documents": ["Valid passport"],
+        "notes": "Citizens of 52 countries can enter UAE visa-free."
+      }
+    ]
+  },
+  {
+    "country": "Australia",
+    "continent": "Oceania",
+    "visa_types": [
+      {
+        "type": "Tourist Visa (subclass 600)",
+        "eligible_passports": ["India", "China", "Pakistan", "Bangladesh"],
+        "visa_on_arrival": false,
+        "e_visa": true,
+        "duration": "3 months per visit, visa valid 12 months",
+        "validity": "Multiple entry",
+        "processing_time_days": "20-40 business days",
+        "fees_usd": 145,
+        "fees_inr": 12000,
+        "required_documents": [
+          "Valid passport",
+          "Online ImmiAccount application",
+          "Bank statements (last 3-6 months)",
+          "Employment documents",
+          "Return flight tickets",
+          "Hotel/accommodation proof",
+          "Travel insurance",
+          "Strong ties to home country evidence"
+        ],
+        "notes": "Apply online via immi.homeaffairs.gov.au. Australian visas can take 4-8 weeks. Strong financial proof required."
+      }
+    ]
+  },
+  {
+    "country": "Canada",
+    "continent": "North America",
+    "visa_types": [
+      {
+        "type": "Temporary Resident Visa (TRV)",
+        "eligible_passports": ["India", "China", "Pakistan", "Bangladesh"],
+        "visa_on_arrival": false,
+        "e_visa": true,
+        "duration": "Up to 6 months per visit",
+        "validity": "Single or multiple entry, valid up to 10 years",
+        "processing_time_days": "14-60 business days",
+        "fees_usd": 100,
+        "fees_inr": 8300,
+        "required_documents": [
+          "Valid passport",
+          "Online application (IRCC portal)",
+          "Biometrics",
+          "Bank statements (last 6 months)",
+          "Employment/income proof",
+          "Travel history",
+          "Letter of invitation (if applicable)",
+          "Travel insurance",
+          "Return ticket"
+        ],
+        "notes": "Apply online at ircc.canada.ca. Biometrics required at a Visa Application Centre. Processing time varies significantly."
+      }
+    ]
+  },
+  {
+    "country": "Malaysia",
+    "continent": "Asia",
+    "visa_types": [
+      {
+        "type": "Visa-Free",
+        "eligible_passports": ["India", "China", "USA", "UK", "Australia", "Germany"],
+        "visa_on_arrival": false,
+        "e_visa": false,
+        "duration": "30 days",
+        "validity": "No visa required",
+        "processing_time_days": "0",
+        "fees_usd": 0,
+        "fees_inr": 0,
+        "required_documents": ["Valid passport", "Return ticket", "Proof of funds"],
+        "notes": "Indians and Chinese citizens can enter Malaysia visa-free for up to 30 days for tourism."
+      }
+    ]
+  }
+]

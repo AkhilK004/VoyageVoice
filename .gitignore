@@ -1,0 +1,48 @@
+# ── Python ─────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Virtual Environments ────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+.env
+ENV/
+
+# ── Secrets (NEVER commit) ──────────────────────────────────────────────────
+.env
+*.key
+secrets.json
+
+# ── ChromaDB / Embeddings (regenerated automatically) ──────────────────────
+evaluation/chroma_store/
+*.sqlite3
+*.chroma
+
+# ── Evaluation Results (local data, gitignore or git-lfs) ──────────────────
+evaluation/results/*.json
+
+# ── IDE ─────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Logs ────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Pytest ──────────────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/

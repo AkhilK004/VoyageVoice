@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VoyageVoice — Evaluation Dashboard</title>
+  <meta name="description" content="Latency, quality, and failure analysis for the VoyageVoice AI voice agent." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/static/css/dashboard.css" />
+</head>
+<body>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-icon">✈</span>
+        <div>
+          <div class="brand-name">VoyageVoice</div>
+          <div class="brand-sub">Evaluation</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="nav-item active" data-view="overview" onclick="showView('overview')">
+          <span>📊</span> Overview
+        </a>
+        <a class="nav-item" data-view="latency" onclick="showView('latency')">
+          <span>⚡</span> Latency
+        </a>
+        <a class="nav-item" data-view="quality" onclick="showView('quality')">
+          <span>🎯</span> Quality
+        </a>
+        <a class="nav-item" data-view="sessions" onclick="showView('sessions')">
+          <span>📋</span> Sessions
+        </a>
+        <a class="nav-item" data-view="analysis" onclick="showView('analysis')">
+          <span>🔍</span> Analysis
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="/" class="btn-call-link">📞 Open Call UI</a>
+        <button class="btn-refresh" onclick="loadAll()">↻ Refresh</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+
+      <!-- Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" id="page-title">Overview</h1>
+          <p class="page-sub" id="page-sub">Aggregate metrics across all sessions</p>
+        </div>
+        <div class="header-right">
+          <span class="sessions-badge" id="total-sessions-badge">0 sessions</span>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <span>Loading metrics…</span>
+      </div>
+
+      <!-- ── OVERVIEW VIEW ──────────────────────────────────────────────── -->
+      <section class="view" id="view-overview">
+        <div class="stat-grid">
+          <div class="stat-card" id="stat-e2e">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-value" id="val-e2e">—</div>
+            <div class="stat-label">E2E Latency (avg)</div>
+            <div class="stat-sub" id="sub-e2e">P95: —</div>
+          </div>
+          <div class="stat-card" id="stat-relevance">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-value" id="val-relevance">—</div>
+            <div class="stat-label">Avg Relevance</div>
+            <div class="stat-sub">out of 5.0</div>
+          </div>
+          <div class="stat-card" id="stat-hallucination">
+            <div class="stat-icon">🚨</div>
+            <div class="stat-value" id="val-hallucination">—</div>
+            <div class="stat-label">Hallucination Rate</div>
+            <div class="stat-sub" id="sub-hall-count">— scored turns</div>
+          </div>
+          <div class="stat-card" id="stat-interruptions">
+            <div class="stat-icon">✂️</div>
+            <div class="stat-value" id="val-interruptions">—</div>
+            <div class="stat-label">Total Interruptions</div>
+            <div class="stat-sub" id="sub-turns">across — turns</div>
+          </div>
+        </div>
+
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="chart-title">E2E Latency Over Time (ms)</div>
+            <div class="chart-wrap"><canvas id="chart-e2e"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Response Quality Scores</div>
+            <div class="chart-wrap"><canvas id="chart-quality-overview"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── LATENCY VIEW ──────────────────────────────────────────────── -->
+      <section class="view hidden" id="view-latency">
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-icon">🎙️</div>
+            <div class="stat-value" id="val-stt">—</div>
+            <div class="stat-label">STT Avg (ms)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🤖</div>
+            <div class="stat-value" id="val-llm">—</div>
+            <div class="stat-label">LLM TTFT Avg (ms)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🔊</div>
+            <div class="stat-value" id="val-tts">—</div>
+            <div class="stat-label">TTS Avg (ms)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-value" id="val-e2e-2">—</div>
+            <div class="stat-label">E2E Avg (ms)</div>
+          </div>
+        </div>
+        <div class="chart-row chart-row-full">
+          <div class="chart-card full">
+            <div class="chart-title">Latency Breakdown Per Turn (ms)</div>
+            <div class="chart-wrap-tall"><canvas id="chart-latency-breakdown"></canvas></div>
+          </div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="chart-title">STT Latency Distribution</div>
+            <div class="chart-wrap"><canvas id="chart-stt-hist"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">E2E Latency Distribution</div>
+            <div class="chart-wrap"><canvas id="chart-e2e-hist"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── QUALITY VIEW ──────────────────────────────────────────────── -->
+      <section class="view hidden" id="view-quality">
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="chart-title">Relevance Scores Distribution</div>
+            <div class="chart-wrap"><canvas id="chart-relevance-dist"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Naturalness Scores Distribution</div>
+            <div class="chart-wrap"><canvas id="chart-natural-dist"></canvas></div>
+          </div>
+        </div>
+        <div class="chart-row chart-row-full">
+          <div class="chart-card full">
+            <div class="chart-title">Quality Score Trend (relevance over time)</div>
+            <div class="chart-wrap"><canvas id="chart-quality-trend"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SESSIONS VIEW ─────────────────────────────────────────────── -->
+      <section class="view hidden" id="view-sessions">
+        <div class="table-card">
+          <table class="sessions-table" id="sessions-table">
+            <thead>
+              <tr>
+                <th>Session</th>
+                <th>Time</th>
+                <th>Turns</th>
+                <th>E2E Avg</th>
+                <th>Relevance</th>
+                <th>Interruptions</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="sessions-tbody">
+              <tr><td colspan="8" class="empty-row">No sessions yet. Start a call!</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Conversation Drilldown -->
+        <div class="drilldown hidden" id="drilldown">
+          <div class="drilldown-header">
+            <span id="drilldown-title">Session Detail</span>
+            <button onclick="closeDrilldown()" class="btn-close">✕</button>
+          </div>
+          <div class="drilldown-body" id="drilldown-body"></div>
+        </div>
+      </section>
+
+      <!-- ── ANALYSIS VIEW ─────────────────────────────────────────────── -->
+      <section class="view hidden" id="view-analysis">
+        <div class="analysis-grid" id="analysis-grid">
+          <div class="empty-state">Run some calls first, then refresh to see failure patterns.</div>
+        </div>
+        <div class="recommendations-card" id="recommendations-card" style="display:none">
+          <div class="rec-title">💡 Recommendations</div>
+          <ul class="rec-list" id="rec-list"></ul>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
